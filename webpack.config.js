@@ -3,10 +3,14 @@ const path = require("path");
 
 // Import the HtmlWebpackPlugin which automatically generates an HTML file with the bundled JS included
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   // Entry point of your application (Webpack starts bundling from here)
   entry: "./src/index.ts",
+  optimization: {
+    splitChunks: false, // Disable automatic code splitting
+  },
 
   // Configuration for how different types of files are handled
   module: {
@@ -44,7 +48,14 @@ module.exports = {
   // Plugins to extend Webpack functionality
   plugins: [
     // Automatically generates an index.html and injects the bundle script tag into it
-    new HtmlWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      template: "./src/index.html",
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: "public", to: "." }, // copies everything from public to dist/
+      ],
+    }),
   ],
   devServer: {
     static: {
@@ -56,6 +67,6 @@ module.exports = {
   },
 
   // Mode of Webpack build: 'development' for readable output and fast builds, 'production' for minified output
-  mode: "production",
+  mode: "development",
   devtool: false,
 };
