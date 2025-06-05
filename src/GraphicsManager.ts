@@ -55,6 +55,61 @@ export class GraphicsManager extends helperMethods {
     return newSprite;
   }
 
+  //create PIXI container
+  createContainer() {
+    return new PIXI.Container();
+  }
+
+  //create PIXI Background with Graphics
+  createRoundedBackground(
+    fill: string,
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    radius: number,
+    alpha: number = 1
+  ) {
+    const rBack: PIXI.Graphics = new PIXI.Graphics();
+    rBack.fill(fill);
+    rBack.roundRect(x, y, w, h, radius);
+    rBack.fill();
+    rBack.alpha = alpha;
+    return rBack;
+  }
+
+  //create PIXI Background with Sprite
+  createBackground(
+    tint: string,
+    alpha: number,
+    width: number,
+    height: number,
+    x: number,
+    y: number
+  ) {
+    const background: PIXI.Sprite = PIXI.Sprite.from(PIXI.Texture.WHITE);
+    background.tint = tint;
+    background.alpha = alpha;
+    background.width = width;
+    background.height = height;
+    background.x = x;
+    background.y = y;
+    return background;
+  }
+
+  //create PIXI Text
+  createText(text: string, fontSize: number, fill: string) {
+    return new PIXI.Text({
+      text: text,
+      style: {
+        fontFamily: "Arial",
+        fontSize: fontSize,
+        fill: fill,
+        align: "center",
+      },
+    });
+  }
+
   async createSkinAnimation(
     order: number,
     // frame1: string,

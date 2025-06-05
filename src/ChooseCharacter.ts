@@ -6,9 +6,8 @@ export class ChooseCharacter extends functionMethods {
   protected chosenSkinNumber!: number; //will hold the number of the chosen skin
 
   protected graphicsManager: any;
-  protected skinChoices: PIXI.Container = this.createContainer();
+  protected skinChoices!: PIXI.Container;
 
-  private mainContainer: PIXI.Container;
   private btnBack1!: PIXI.Sprite;
   private btnBack2!: PIXI.Sprite;
   private btnBack3!: PIXI.Sprite;
@@ -17,16 +16,16 @@ export class ChooseCharacter extends functionMethods {
   private skin3!: PIXI.AnimatedSprite;
   private app: PIXI.Application;
 
-  constructor(app: PIXI.Application, mainContainer: PIXI.Container) {
+  constructor(app: PIXI.Application) {
     super();
     this.app = app;
-    this.mainContainer = mainContainer;
     this.graphicsManager = new GraphicsManager(
       this.app,
       this.btnBack1,
       this.btnBack2,
       this.btnBack3
     );
+    this.skinChoices = this.graphicsManager.createContainer();
   }
 
   async loadCharacterChoosing() {
@@ -36,33 +35,6 @@ export class ChooseCharacter extends functionMethods {
     this.btnBack2.x = this.app.screen.width / 2 - this.btnBack2.width / 2;
     this.btnBack3 = this.graphicsManager.createSprite("skinBase");
     this.btnBack3.x = this.app.screen.width / 2 + this.btnBack3.width;
-    this.btnBack1!.onpointerover = () => {
-      this.startAnimation(this.skin1!);
-    };
-    this.btnBack1!.onpointerout = () => {
-      this.stopAnimation(this.skin1!);
-    };
-
-    this.btnBack2!.onpointerover = () => {
-      this.startAnimation(this.skin2!);
-    };
-    this.btnBack2!.onpointerout = () => {
-      this.stopAnimation(this.skin2!);
-    };
-
-    this.btnBack3!.onpointerover = () => {
-      this.startAnimation(this.skin3!);
-    };
-    this.btnBack3!.onpointerout = () => {
-      this.stopAnimation(this.skin3!);
-    };
-
-    this.chosenSkin(
-      this.btnBack1,
-      this.mainContainer,
-      this.skinChoices,
-      this.city
-    );
 
     this.addChildrenToContainer(this.skinChoices, [
       this.btnBack1,
@@ -71,9 +43,6 @@ export class ChooseCharacter extends functionMethods {
     ]);
     this.skinChoices.x = 0;
     this.skinChoices.y = this.app.screen.height / 2 - this.btnBack1.height / 2;
-    this.city.zIndex = 1;
-    this.skinChoices.zIndex = 2;
-    this.pixelBackground(this.city);
   }
 
   async loadBirds() {
@@ -96,5 +65,18 @@ export class ChooseCharacter extends functionMethods {
       this.skin2,
       this.skin3,
     ]);
+
+    this.chosenSkin(this.btnBack1, this.chosenSkinNumber, 1);
+    this.chosenSkin(this.btnBack2, this.chosenSkinNumber, 2);
+    this.chosenSkin(this.btnBack3, this.chosenSkinNumber, 3);
+
+    this.startAnimation(
+      [this.btnBack1, this.btnBack2, this.btnBack3],
+      [this.skin1, this.skin2, this.skin3]
+    );
+    this.stopAnimation(
+      [this.btnBack1, this.btnBack2, this.btnBack3],
+      [this.skin1, this.skin2, this.skin3]
+    );
   }
 }
