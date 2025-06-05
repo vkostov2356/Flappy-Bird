@@ -1,10 +1,7 @@
 import * as PIXI from "pixi.js";
-import { functionMethods } from "./functionMethods";
 
-export class helperMethods extends functionMethods {
-  constructor() {
-    super();
-  }
+export class helperMethods {
+  constructor() {}
 
   //create PIXI container
   createContainer() {
@@ -86,6 +83,18 @@ export class helperMethods extends functionMethods {
     element.width = 100;
     element.height = 100;
     this.grayAnimation(element);
+  }
+
+  chosenSkin(
+    element: PIXI.Sprite,
+    mainContainer: PIXI.Container,
+    removeContainer: PIXI.Container,
+    background: PIXI.Container
+  ) {
+    element.onpointerdown = () => {
+      mainContainer.removeChild(removeContainer);
+    };
+    background.filters = [];
   }
 
   grayAnimation(element: PIXI.AnimatedSprite) {

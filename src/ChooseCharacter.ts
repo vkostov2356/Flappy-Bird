@@ -2,32 +2,25 @@ import * as PIXI from "pixi.js";
 import { GraphicsManager } from "./GraphicsManager";
 import { functionMethods } from "./functionMethods";
 
-class PixiApp extends functionMethods {
-  protected app: PIXI.Application = new PIXI.Application();
-  protected mainContainer: PIXI.Container = this.createContainer();
-  protected city!: PIXI.Sprite;
-  protected skinChoices: PIXI.Container = this.createContainer();
+export class ChooseCharacter extends functionMethods {
+  protected chosenSkinNumber!: number; //will hold the number of the chosen skin
+
   protected graphicsManager: any;
-  protected registeredAssets: Set<string> = new Set();
+  protected skinChoices: PIXI.Container = this.createContainer();
 
-  protected btnBack1!: PIXI.Sprite;
-  protected btnBack2!: PIXI.Sprite;
-  protected btnBack3!: PIXI.Sprite;
-  protected skin1!: PIXI.AnimatedSprite;
-  protected skin2!: PIXI.AnimatedSprite;
-  protected skin3!: PIXI.AnimatedSprite;
+  private mainContainer: PIXI.Container;
+  private btnBack1!: PIXI.Sprite;
+  private btnBack2!: PIXI.Sprite;
+  private btnBack3!: PIXI.Sprite;
+  private skin1!: PIXI.AnimatedSprite;
+  private skin2!: PIXI.AnimatedSprite;
+  private skin3!: PIXI.AnimatedSprite;
+  private app: PIXI.Application;
 
-  constructor() {
+  constructor(app: PIXI.Application, mainContainer: PIXI.Container) {
     super();
-    this.init();
-  }
-
-  //initialization of the Application
-  async init() {
-    this.app = new PIXI.Application();
-    await this.app.init({ resizeTo: window });
-    document.body.appendChild(this.app.canvas);
-    this.loadMainContainer();
+    this.app = app;
+    this.mainContainer = mainContainer;
     this.graphicsManager = new GraphicsManager(
       this.app,
       this.btnBack1,
@@ -36,28 +29,6 @@ class PixiApp extends functionMethods {
     );
   }
 
-  //creation of the mainContainer
-  async loadMainContainer() {
-    this.app.stage.addChild(this.mainContainer);
-    this.loadAssets();
-  }
-
-  //loading the main Background
-  async loadBackground() {
-    const cityTexture: PIXI.Texture = await PIXI.Assets.load(
-      "smallSizeCityBackground.webp"
-    );
-    this.city = new PIXI.Sprite(cityTexture);
-    this.evenHeight(this.city, this.app.screen);
-    this.evenWidth(this.city, this.app.screen);
-
-    this.city.anchor.set(0);
-
-    this.loadCharacterChoosing();
-    this.loadBirds();
-  }
-
-  //loading the character choosing container
   async loadCharacterChoosing() {
     this.btnBack1 = this.graphicsManager.createSprite("skinBase");
     this.btnBack1.x = this.app.screen.width / 2 - this.btnBack1.width * 2;
@@ -108,21 +79,15 @@ class PixiApp extends functionMethods {
   async loadBirds() {
     this.skin1 = await this.graphicsManager.createSkinAnimation(
       1,
-      //   "skin1-up.png",
-      //   "skin1-down.png",
       this.btnBack1
     );
 
     this.skin2 = await this.graphicsManager.createSkinAnimation(
       2,
-      //   "skin2-up.png",
-      //   "skin2-down.png",
       this.btnBack2
     );
     this.skin3 = await this.graphicsManager.createSkinAnimation(
       3,
-      //   "skin3-up.png",
-      //   "skin3-down.png",
       this.btnBack3
     );
 
@@ -132,16 +97,4 @@ class PixiApp extends functionMethods {
       this.skin3,
     ]);
   }
-
-  async loadAssets() {
-    await this.loadBackground();
-    await this.loadCharacterChoosing();
-    await this.loadBirds();
-    await this.addChildrenToContainer(this.mainContainer, [
-      this.city,
-      this.skinChoices,
-    ]);
-  }
 }
-
-new PixiApp();
