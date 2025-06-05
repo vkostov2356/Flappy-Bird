@@ -2,11 +2,13 @@ import * as PIXI from "pixi.js";
 import { GraphicsManager } from "./GraphicsManager";
 import { functionMethods } from "./functionMethods";
 
-export class ChooseCharacter extends functionMethods {
+export class ChooseCharacter {
   protected chosenSkinNumber!: number; //will hold the number of the chosen skin
 
   protected graphicsManager: any;
   protected skinChoices!: PIXI.Container;
+
+  protected functionMethod: any;
 
   private btnBack1!: PIXI.Sprite;
   private btnBack2!: PIXI.Sprite;
@@ -17,7 +19,6 @@ export class ChooseCharacter extends functionMethods {
   private app: PIXI.Application;
 
   constructor(app: PIXI.Application) {
-    super();
     this.app = app;
     this.graphicsManager = new GraphicsManager(
       this.app,
@@ -26,6 +27,7 @@ export class ChooseCharacter extends functionMethods {
       this.btnBack3
     );
     this.skinChoices = this.graphicsManager.createContainer();
+    this.functionMethod = new functionMethods();
   }
 
   async loadCharacterChoosing() {
@@ -36,13 +38,14 @@ export class ChooseCharacter extends functionMethods {
     this.btnBack3 = this.graphicsManager.createSprite("skinBase");
     this.btnBack3.x = this.app.screen.width / 2 + this.btnBack3.width;
 
-    this.addChildrenToContainer(this.skinChoices, [
+    this.functionMethod.addChildrenToContainer(this.skinChoices, [
       this.btnBack1,
       this.btnBack2,
       this.btnBack3,
     ]);
     this.skinChoices.x = 0;
     this.skinChoices.y = this.app.screen.height / 2 - this.btnBack1.height / 2;
+    this.loadBirds();
   }
 
   async loadBirds() {
@@ -60,21 +63,21 @@ export class ChooseCharacter extends functionMethods {
       this.btnBack3
     );
 
-    this.addChildrenToContainer(this.skinChoices, [
+    this.functionMethod.addChildrenToContainer(this.skinChoices, [
       this.skin1,
       this.skin2,
       this.skin3,
     ]);
 
-    this.chosenSkin(this.btnBack1, this.chosenSkinNumber, 1);
-    this.chosenSkin(this.btnBack2, this.chosenSkinNumber, 2);
-    this.chosenSkin(this.btnBack3, this.chosenSkinNumber, 3);
+    this.functionMethod.chosenSkin(this.btnBack1, this.chosenSkinNumber, 1);
+    this.functionMethod.chosenSkin(this.btnBack2, this.chosenSkinNumber, 2);
+    this.functionMethod.chosenSkin(this.btnBack3, this.chosenSkinNumber, 3);
 
-    this.startAnimation(
+    this.functionMethod.startAnimation(
       [this.btnBack1, this.btnBack2, this.btnBack3],
       [this.skin1, this.skin2, this.skin3]
     );
-    this.stopAnimation(
+    this.functionMethod.stopAnimation(
       [this.btnBack1, this.btnBack2, this.btnBack3],
       [this.skin1, this.skin2, this.skin3]
     );
