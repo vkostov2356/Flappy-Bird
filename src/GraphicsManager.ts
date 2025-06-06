@@ -4,22 +4,11 @@ import { helperMethods } from "./helperMethods";
 export class GraphicsManager extends helperMethods {
   private app: PIXI.Application;
   private textures: Map<string, PIXI.Texture> = new Map();
-  private btnBack1: PIXI.Sprite;
-  private btnBack2: PIXI.Sprite;
-  private btnBack3: PIXI.Sprite;
   protected registeredAssets: Set<string> = new Set();
 
-  constructor(
-    app: PIXI.Application,
-    btnBack1: PIXI.Sprite,
-    btnBack2: PIXI.Sprite,
-    btnBack3: PIXI.Sprite
-  ) {
+  constructor(app?: PIXI.Application) {
     super();
-    this.app = app;
-    this.btnBack1 = btnBack1;
-    this.btnBack2 = btnBack2;
-    this.btnBack3 = btnBack3;
+    this.app = app!;
     this.createTextures();
   }
 
@@ -38,6 +27,19 @@ export class GraphicsManager extends helperMethods {
     const skinBaseTexture = this.app.renderer.generateTexture(skinBase);
     // const skinBaseSprite = new PIXI.Sprite(skinBaseTexture);
     this.textures.set("skinBase", skinBaseTexture);
+
+    const startBtnBase = this.createRoundedBackground(
+      "rgb(255, 255, 255)",
+      0,
+      0,
+      50,
+      150,
+      10,
+      0.8
+    );
+    startBtnBase.stroke({ width: 5, color: "#F79370", alpha: 1 });
+    const startBtnBaseTexture = this.app.renderer.generateTexture(startBtnBase);
+    this.textures.set("startBtnBase", startBtnBaseTexture);
   }
 
   //get the texture from the map

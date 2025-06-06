@@ -1,10 +1,7 @@
 import * as PIXI from "pixi.js";
-import { GraphicsManager } from "./GraphicsManager";
-import { functionMethods } from "./functionMethods";
 
 export class ChooseCharacter {
-  protected chosenSkinNumber!: number; //will hold the number of the chosen skin
-
+  protected chosenAnimation!: PIXI.AnimatedSprite;
   protected graphicsManager: any;
   protected skinChoices!: PIXI.Container;
 
@@ -18,16 +15,15 @@ export class ChooseCharacter {
   private skin3!: PIXI.AnimatedSprite;
   private app: PIXI.Application;
 
-  constructor(app: PIXI.Application) {
+  constructor(
+    app: PIXI.Application,
+    functionMethod: any,
+    graphicsManager: any
+  ) {
     this.app = app;
-    this.graphicsManager = new GraphicsManager(
-      this.app,
-      this.btnBack1,
-      this.btnBack2,
-      this.btnBack3
-    );
+    this.graphicsManager = graphicsManager;
     this.skinChoices = this.graphicsManager.createContainer();
-    this.functionMethod = new functionMethods();
+    this.functionMethod = functionMethod;
   }
 
   async loadCharacterChoosing() {
@@ -69,9 +65,11 @@ export class ChooseCharacter {
       this.skin3,
     ]);
 
-    this.functionMethod.chosenSkin(this.btnBack1, this.chosenSkinNumber, 1);
-    this.functionMethod.chosenSkin(this.btnBack2, this.chosenSkinNumber, 2);
-    this.functionMethod.chosenSkin(this.btnBack3, this.chosenSkinNumber, 3);
+    this.chosenAnimation = this.functionMethod.chosenSkin(
+      [this.btnBack1, this.btnBack2, this.btnBack3],
+      [this.skin1, this.skin2, this.skin3],
+      this.skinChoices
+    );
 
     this.functionMethod.startAnimation(
       [this.btnBack1, this.btnBack2, this.btnBack3],

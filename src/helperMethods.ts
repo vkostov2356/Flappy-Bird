@@ -9,6 +9,13 @@ export class helperMethods {
       container.addChild(element);
     });
   }
+
+  //remove child from container
+
+  removeChild(parent: PIXI.Container, child: PIXI.Container) {
+    parent.removeChild(child);
+  }
+
   //make height even
   evenHeight(element: any, reference: any) {
     element.height = reference.height;
