@@ -65,17 +65,17 @@ export class ChooseCharacter {
       this.skin3,
     ]);
 
-    this.chosenAnimation = this.functionMethod.chosenSkin(
+    this.functionMethod.chosenSkin(
       [this.btnBack1, this.btnBack2, this.btnBack3],
       [this.skin1, this.skin2, this.skin3],
       this.skinChoices
     );
 
-    this.functionMethod.startAnimation(
+    await this.functionMethod.startAnimation(
       [this.btnBack1, this.btnBack2, this.btnBack3],
       [this.skin1, this.skin2, this.skin3]
     );
-    this.functionMethod.stopAnimation(
+    await this.functionMethod.stopAnimation(
       [this.btnBack1, this.btnBack2, this.btnBack3],
       [this.skin1, this.skin2, this.skin3]
     );

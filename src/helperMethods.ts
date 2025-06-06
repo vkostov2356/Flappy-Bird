@@ -25,6 +25,11 @@ export class helperMethods {
     element.width = reference.width;
   }
 
+  centerElement(parent: any, child: any) {
+    child.x = parent.width / 2 - child.width / 2;
+    child.y = parent.height / 2 - child.height / 2;
+  }
+
   startAnimation(main: PIXI.Sprite[], animated: PIXI.AnimatedSprite[]) {
     for (let i = 0; i < main.length; i++) {
       main[i].onpointerover = () => {
@@ -57,5 +62,28 @@ export class helperMethods {
 
   colorAnimation(element: PIXI.AnimatedSprite) {
     element.filters = [];
+  }
+
+  hoverScale(elements: [PIXI.Sprite, PIXI.Text], parent: any) {
+    elements[0].onpointerover = () => {
+      elements[0].scale = 1.2;
+      elements[1].scale = 1.2;
+      this.centerElement(parent, elements[0]);
+      this.centerElement(parent, elements[1]);
+    };
+
+    elements[0].onpointerout = () => {
+      elements[0].scale = 1;
+      elements[1].scale = 1;
+      this.centerElement(parent, elements[0]);
+      this.centerElement(parent, elements[1]);
+    };
+  }
+
+  isReallyTouchDevice(): boolean {
+    return (
+      (navigator.maxTouchPoints && navigator.maxTouchPoints > 1) ||
+      window.matchMedia("(pointer: coarse)").matches
+    );
   }
 }

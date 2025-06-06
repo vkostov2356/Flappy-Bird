@@ -28,16 +28,17 @@ export class GraphicsManager extends helperMethods {
     // const skinBaseSprite = new PIXI.Sprite(skinBaseTexture);
     this.textures.set("skinBase", skinBaseTexture);
 
+    //create start button texture
     const startBtnBase = this.createRoundedBackground(
       "rgb(255, 255, 255)",
       0,
       0,
-      50,
       150,
+      70,
       10,
       0.8
     );
-    startBtnBase.stroke({ width: 5, color: "#F79370", alpha: 1 });
+    startBtnBase.stroke({ width: 5, color: "rgb(21, 234, 39)", alpha: 1 });
     const startBtnBaseTexture = this.app.renderer.generateTexture(startBtnBase);
     this.textures.set("startBtnBase", startBtnBaseTexture);
   }
@@ -104,8 +105,9 @@ export class GraphicsManager extends helperMethods {
     return new PIXI.Text({
       text: text,
       style: {
-        fontFamily: "Arial",
+        fontFamily: "'Lucida Handwriting', cursive",
         fontSize: fontSize,
+        fontWeight: "bold",
         fill: fill,
         align: "center",
       },
