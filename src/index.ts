@@ -25,11 +25,13 @@ class PixiApp {
     await this.app.init({ resizeTo: window });
     document.body.appendChild(this.app.canvas);
 
+    this.graphicsManager = new GraphicsManager(this.app);
     this.functionMethod = new functionMethods(
       this.app,
-      this.loadStartBtn.bind(this)
+      this.loadStartBtn.bind(this),
+      this.graphicsManager
     );
-    this.graphicsManager = new GraphicsManager(this.app);
+
     this.chooseCharacter = new ChooseCharacter(
       this.app,
       this.functionMethod,
@@ -56,7 +58,11 @@ class PixiApp {
     await this.chooseCharacter.loadCharacterChoosing();
     await this.functionMethod.addChildrenToContainer(
       this.functionMethod.mainContainer,
-      [this.functionMethod.citySprite, this.chooseCharacter.skinChoices]
+      [
+        this.functionMethod.citySprite1,
+        this.functionMethod.citySprite2,
+        this.chooseCharacter.skinChoices,
+      ]
     );
   }
 
@@ -73,6 +79,10 @@ class PixiApp {
       this.startGame.startBtnBack,
       this.chooseCharacter.chosenAnimation,
       this.startGame.startContainer
+    );
+
+    this.functionMethod.chosenAnimationInit(
+      this.chooseCharacter.chosenAnimation
     );
   }
 }

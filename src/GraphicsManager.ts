@@ -41,6 +41,19 @@ export class GraphicsManager extends helperMethods {
     startBtnBase.stroke({ width: 5, color: "rgb(21, 234, 39)", alpha: 1 });
     const startBtnBaseTexture = this.app.renderer.generateTexture(startBtnBase);
     this.textures.set("startBtnBase", startBtnBaseTexture);
+
+    //create obstacles
+    const obstacleBase = this.createRoundedBackground(
+      "rgb(134, 13, 13)",
+      150,
+      250,
+      100,
+      Math.random() * Math.floor(this.app.screen.height) - 150,
+      10,
+      0.8
+    );
+    const obstacleTexture = this.app.renderer.generateTexture(obstacleBase);
+    this.textures.set("obstacleBase", obstacleTexture);
   }
 
   //get the texture from the map
