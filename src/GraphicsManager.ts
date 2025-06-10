@@ -12,7 +12,7 @@ export class GraphicsManager extends helperMethods {
     this.createTextures();
   }
 
-  private createTextures() {
+  private async createTextures() {
     //create background of the chooseSkin buttons
     const skinBase = this.createRoundedBackground(
       "rgb(255, 255, 255)",
@@ -42,18 +42,13 @@ export class GraphicsManager extends helperMethods {
     const startBtnBaseTexture = this.app.renderer.generateTexture(startBtnBase);
     this.textures.set("startBtnBase", startBtnBaseTexture);
 
-    //create obstacles
-    const obstacleBase = this.createRoundedBackground(
-      "rgb(134, 13, 13)",
-      150,
-      250,
-      100,
-      Math.random() * Math.floor(this.app.screen.height) - 150,
-      10,
-      0.8
-    );
-    const obstacleTexture = this.app.renderer.generateTexture(obstacleBase);
-    this.textures.set("obstacleBase", obstacleTexture);
+    //creating gameOver
+    const gameOverTexture = await PIXI.Assets.load("gameOver.png");
+    this.textures.set("gameOver", gameOverTexture);
+
+    //creating restart
+    const restartTexture = await PIXI.Assets.load("restart.png");
+    this.textures.set("restart", restartTexture);
   }
 
   //get the texture from the map
@@ -74,6 +69,11 @@ export class GraphicsManager extends helperMethods {
   //create PIXI container
   createContainer() {
     return new PIXI.Container();
+  }
+
+  //create PIXI Ticker
+  createTicker() {
+    return new PIXI.Ticker();
   }
 
   //create PIXI Background with Graphics

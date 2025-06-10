@@ -79,11 +79,4 @@ export class helperMethods {
       this.centerElement(parent, elements[1]);
     };
   }
-
-  isReallyTouchDevice(): boolean {
-    return (
-      (navigator.maxTouchPoints && navigator.maxTouchPoints > 1) ||
-      window.matchMedia("(pointer: coarse)").matches
-    );
-  }
 }

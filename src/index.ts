@@ -4,6 +4,8 @@ import { GraphicsManager } from "./GraphicsManager";
 import { ChooseCharacter } from "./ChooseCharacter";
 import { StartGame } from "./StartGame";
 import { MainGame } from "./MainGame";
+import { gsapFunctions } from "./gsapFunctions";
+import { EndGame } from "./EndGame";
 
 class PixiApp {
   protected app: PIXI.Application = new PIXI.Application();
@@ -11,7 +13,9 @@ class PixiApp {
   protected chooseCharacter: any;
   protected startGame: any;
   protected mainGame: any;
+  protected endGame: any;
   protected functionMethod: any;
+  protected gsapFunctions: any;
   protected graphicsManager: any;
   protected registeredAssets: Set<string> = new Set();
 
@@ -25,11 +29,13 @@ class PixiApp {
     await this.app.init({ resizeTo: window });
     document.body.appendChild(this.app.canvas);
 
+    this.gsapFunctions = new gsapFunctions(this.app);
     this.graphicsManager = new GraphicsManager(this.app);
     this.functionMethod = new functionMethods(
       this.app,
       this.loadStartBtn.bind(this),
-      this.graphicsManager
+      this.graphicsManager,
+      this.gsapFunctions
     );
 
     this.chooseCharacter = new ChooseCharacter(
@@ -43,10 +49,18 @@ class PixiApp {
       this.graphicsManager,
       this.chooseCharacter.chosenAnimation
     );
+    this.endGame = new EndGame(
+      this.app,
+      this.functionMethod,
+      this.graphicsManager,
+      this.gsapFunctions
+    );
     this.mainGame = new MainGame(
       this.app,
       this.functionMethod,
-      this.graphicsManager
+      this.graphicsManager,
+      this.endGame,
+      this.gsapFunctions
     );
 
     await this.loadAssets();
@@ -75,7 +89,7 @@ class PixiApp {
       [this.startGame.startContainer, this.chooseCharacter.chosenAnimation]
     );
 
-    this.functionMethod.clickStartBtn(
+    this.mainGame.clickStartBtn(
       this.startGame.startBtnBack,
       this.chooseCharacter.chosenAnimation,
       this.startGame.startContainer
