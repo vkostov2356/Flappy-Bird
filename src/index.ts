@@ -29,13 +29,17 @@ class FlappyBird {
     this.mainContainer = new PIXI.Container();
     this.app.stage.addChild(this.mainContainer);
 
+    this.loadGraphics();
+  }
+  async loadGraphics() {
+    this.graphicsManager = new GraphicsManager(this.utils, this.app);
+    await this.graphicsManager.loadTextures();
     this.loadClasses();
   }
 
   loadClasses() {
     //loading classes
     this.gsapFunctions = new gsapFunctions(this.app);
-    this.graphicsManager = new GraphicsManager(this.utils, this.app);
     this.UIElements = new UIElements(
       this.app,
       this.utils,

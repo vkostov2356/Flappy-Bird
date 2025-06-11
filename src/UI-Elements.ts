@@ -34,7 +34,17 @@ export class UIElements {
   protected singleObstacleContainer!: PIXI.Container;
   protected obstaclesContainer!: PIXI.Container;
 
+  protected scoreContainer!: PIXI.Container;
+  protected scoreBoard!: PIXI.Sprite;
+  protected scoreText!: PIXI.Text;
+  protected scoreResult!: PIXI.Text;
+  protected bestScore: number = 0;
+  protected score: number = 0;
+  protected scoreBoardBase!: PIXI.Sprite;
+  protected scoreMedal!: PIXI.Sprite;
+
   protected gameOverSprite!: PIXI.Sprite;
+  protected gameRestartSprite!: PIXI.Sprite;
 
   //chosen character
   protected chosenCharacter!: PIXI.AnimatedSprite; //last name chosenAnimation
@@ -57,11 +67,13 @@ export class UIElements {
   async loadUIElements() {
     await this.loadBackground();
     await this.loadCharacters();
+
     this.utils.addChildrenToContainer(this.mainContainer, [
       this.backImgs[0],
       this.backImgs[1],
       this.skinChoices,
     ]);
+    this.loadScoreBord();
   }
 
   ////////////////BACKGROUND//////////////////////////
@@ -103,8 +115,6 @@ export class UIElements {
     this.graphicsManager.backgroundTicker = this.graphicsManager.createTicker(); // Reset the ticker
     const tickerStarStop = (element: PIXI.Sprite) => {
       element.onpointerdown = () => {
-        console.log("clicked");
-
         this.graphicsManager.backgroundTicker.start();
         this.moveObstacles();
         this.dropBird();
@@ -236,7 +246,8 @@ export class UIElements {
       this.utils.removeChild(this.mainContainer, this.startContainer);
     this.gsap.startingBirdAnimation(
       this.chosenCharacter,
-      this.moveBackground.bind(this)
+      this.moveBackground.bind(this),
+      this.scoreContainer
     );
   }
 
@@ -300,9 +311,16 @@ export class UIElements {
     this.graphicsManager.obstaclesTicker = this.graphicsManager.createTicker();
     let obstacles: PIXI.Container[] = [];
     let elapsed = 0;
+
     this.graphicsManager.obstaclesTicker.add(async (ticker) => {
       elapsed += ticker.deltaTime / 60;
-
+      if (obstacles[0]) {
+        this.collisionDetection(this.chosenCharacter, obstacles[0].children);
+        if (this.chosenCharacter.x >= obstacles[0].x + obstacles[0].width) {
+          this.score += 1;
+          this.updateScore(this.score);
+        }
+      }
       if (
         obstacles[0] &&
         this.chosenCharacter.x - obstacles[0].width > obstacles[0].x
@@ -310,7 +328,7 @@ export class UIElements {
         obstacles.shift();
       }
 
-      if (elapsed >= 3) {
+      if (elapsed >= 1.5) {
         elapsed = 0;
         this.singleObstacleContainer = new PIXI.Container();
 
@@ -334,11 +352,87 @@ export class UIElements {
     this.graphicsManager.obstaclesTicker.start();
   }
 
+  ////////////////SCORE//////////////////////////
+
+  //rendering score board
+  async loadScoreBord() {
+    this.scoreContainer = this.graphicsManager.createContainer();
+    this.scoreBoard = this.graphicsManager.createSprite("scoreBoard");
+    this.scoreBoard.width = this.app.screen.width / 7;
+    this.scoreBoard.height = this.app.screen.height / 3;
+    this.scoreContainer.addChild(this.scoreBoard);
+    this.scoreContainer.x =
+      this.app.screen.width - this.scoreContainer.width * 1.5;
+    this.scoreContainer.y = -this.scoreBoard.height;
+    this.mainContainer.addChild(this.scoreContainer);
+    this.loadScore();
+  }
+
+  //rendering score
+  loadScore() {
+    this.scoreText = this.graphicsManager.createText(
+      "Score",
+      30,
+      "rgb(255, 255, 255)"
+    );
+    this.scoreText.x = this.scoreBoard.width / 2 - this.scoreText.width / 2;
+    this.scoreText.y = this.scoreBoard.height / 2.5;
+    this.updateScore(this.score);
+    this.scoreContainer.addChild(this.scoreText);
+  }
+
+  updateScore(score: number) {
+    this.scoreContainer.removeChild(this.scoreResult);
+    this.scoreResult = this.graphicsManager.createText(
+      `${score}`,
+      30,
+      "rgb(255, 255, 255)"
+    );
+    this.scoreResult.x = this.scoreBoard.width / 2 - this.scoreResult.width / 2;
+    this.scoreResult.y = this.scoreBoard.height / 1.4;
+    this.scoreContainer.addChild(this.scoreResult);
+  }
+
+  //collision check
+  collisionDetection(
+    el: PIXI.AnimatedSprite,
+    obstacles: PIXI.ContainerChild[]
+  ) {
+    const elBounds = el.getBounds();
+    const obstacleTop = obstacles[0].getBounds();
+    const obstacleBot = obstacles[1].getBounds();
+
+    if (
+      elBounds.x < obstacleTop.x + obstacleTop.width &&
+      elBounds.x + elBounds.width > obstacleTop.x &&
+      elBounds.y < obstacleTop.y + obstacleTop.height &&
+      elBounds.y + elBounds.height > obstacleTop.y
+    ) {
+      //   this.gameOver();
+    } else if (
+      elBounds.x < obstacleBot.x + obstacleBot.width &&
+      elBounds.x + elBounds.width > obstacleBot.x &&
+      elBounds.y < obstacleBot.y + obstacleBot.height &&
+      elBounds.y + elBounds.height > obstacleBot.y
+    ) {
+      //   this.gameOver();
+    }
+  }
+
+  //loading scoreboard base after game over
+  loadScoreBoardBase() {
+    this.bestScore = this.bestScore < this.score ? this.score : this.bestScore;
+    this.scoreBoardBase = this.graphicsManager.createSprite("scoreBoardBase");
+    this.utils.centerElement(this.app.screen, this.scoreBoardBase);
+    this.mainContainer.addChild(this.scoreBoardBase);
+  }
+
   ////////////////END OF GAME//////////////////////////
 
   gameOver() {
     this.gameOverSprite = this.graphicsManager.createSprite("gameOver");
     gsap.globalTimeline.clear();
+    this.gsap.scoreBoardUp(this.scoreContainer);
 
     this.backImgs[0].eventMode = this.backImgs[1].eventMode = "none";
 
@@ -349,45 +443,42 @@ export class UIElements {
       this.chosenCharacter,
       this.showGameOver.bind(this)
     );
-    // gsap.to(this.chosenCharacter, {
-    //   alpha: 0,
-    //   duration: 0.1,
-    //   repeat: 1,
-    //   yoyo: true,
-    //   ease: "none",
-    //   onComplete: () => {
-    //     this.showGameOver(gameOverSprite);
-    //   },
-    // });
+    this.loadScoreBoardBase();
   }
 
   showGameOver() {
     const startWidth = this.app.screen.width / 10;
     const startHeight = this.app.screen.height / 10;
+    const endWidth = this.app.screen.width / 4;
+    const endHeight = this.app.screen.height / 4;
+    console.log(this.scoreBoardBase.y);
 
     this.gameOverSprite.eventMode = "none";
     this.gameOverSprite.width = startWidth;
     this.gameOverSprite.height = startHeight;
     this.gameOverSprite.x = (this.app.screen.width - startWidth) / 2;
-    this.gameOverSprite.y = this.app.screen.height / 2 - startHeight;
+    this.gameOverSprite.y = this.scoreBoardBase.y - endHeight;
     this.mainContainer.addChild(this.gameOverSprite);
 
     this.gsap.animateRestartBtn(
       this.gameOverSprite,
+      endWidth,
+      endHeight,
       this.showRestartBtn.bind(this)
     );
   }
 
   showRestartBtn() {
-    const restartBtn = this.graphicsManager.createSprite("restart");
+    this.gameRestartSprite = this.graphicsManager.createSprite("restart");
 
-    restartBtn.width = 10;
-    restartBtn.height = 10;
-    restartBtn.x = this.app.screen.width / 2;
-    restartBtn.y = this.app.screen.height / 2 + this.app.screen.height / 2 / 2;
+    this.gameRestartSprite.width = 10;
+    this.gameRestartSprite.height = 10;
+    this.gameRestartSprite.x = this.app.screen.width / 2;
+    this.gameRestartSprite.y =
+      this.app.screen.height / 2 + this.app.screen.height / 2 / 2;
 
-    this.mainContainer.addChild(restartBtn);
-    gsap.to(restartBtn, {
+    this.mainContainer.addChild(this.gameRestartSprite);
+    gsap.to(this.gameRestartSprite, {
       height: 100,
       width: 100,
       duration: 0.5,
@@ -395,13 +486,13 @@ export class UIElements {
       y: this.app.screen.height / 2 + this.app.screen.height / 2 / 2,
     });
 
-    restartBtn.onpointerover = () => {
-      restartBtn.height = restartBtn.width += 10;
+    this.gameRestartSprite.onpointerover = () => {
+      this.gameRestartSprite.height = this.gameRestartSprite.width += 10;
     };
-    restartBtn.onpointerout = () => {
-      restartBtn.height = restartBtn.width -= 10;
+    this.gameRestartSprite.onpointerout = () => {
+      this.gameRestartSprite.height = this.gameRestartSprite.width -= 10;
     };
-    restartBtn.onpointerdown = () => {
+    this.gameRestartSprite.onpointerdown = () => {
       this.restartBtnAction();
     };
   }
@@ -412,8 +503,15 @@ export class UIElements {
     this.backImgs[1].x = this.backImgs[0].width;
     this.chosenCharacter.play();
     this.obstaclesContainer.removeChildren();
+    this.scoreBoard;
+    this.scoreContainer.y = -this.scoreContainer.height;
     this.gsap.startingPositionBird(this.chosenCharacter, () =>
       this.moveBackground()
     );
+    this.gsap.scoreBoardDown(this.scoreContainer);
+    this.mainContainer.removeChild(this.gameOverSprite);
+    this.mainContainer.removeChild(this.gameRestartSprite);
+    this.score = 0;
+    this.updateScore(this.score);
   }
 }

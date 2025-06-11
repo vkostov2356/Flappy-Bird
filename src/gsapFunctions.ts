@@ -10,9 +10,9 @@ export class gsapFunctions {
   //animation of the bird after clicking START
   startingBirdAnimation(
     animation: PIXI.AnimatedSprite,
-    moveBackground?: () => void
+    moveBackground: () => void,
+    score: PIXI.Container
   ) {
-    console.log("gsap1");
     gsap.to(animation, {
       x: this.app!.screen.width + animation.width,
       duration: 0.1, //2
@@ -20,7 +20,8 @@ export class gsapFunctions {
       onComplete: () => {
         animation.width = animation.width / 2;
         animation.height = animation.height / 2;
-        this.startingPositionBird(animation, moveBackground!);
+        this.startingPositionBird(animation, moveBackground);
+        this.scoreBoardDown(score);
       },
     });
   }
@@ -30,7 +31,6 @@ export class gsapFunctions {
     animation: PIXI.AnimatedSprite,
     moveBackground: () => void
   ) {
-    console.log("gsap2");
     gsap.fromTo(
       animation,
       { x: 0, y: this.app!.screen.height / 2 / 2 },
@@ -38,7 +38,6 @@ export class gsapFunctions {
         x: animation.width * 2,
         duration: 0.1, //1
         onComplete: () => {
-          console.log("gsap 2 done");
           moveBackground();
         },
       }
@@ -46,7 +45,6 @@ export class gsapFunctions {
   }
 
   birdUpGsap(animation: PIXI.AnimatedSprite) {
-    console.log("gsap3");
     gsap.to(animation, {
       y: () => {
         return animation.y <= animation.height
@@ -58,7 +56,6 @@ export class gsapFunctions {
   }
 
   moveObstacle(el: PIXI.Container, parent: PIXI.Container) {
-    console.log("gsap4");
     gsap.to(el, {
       x: -el.width,
       duration: 10, //0.5
@@ -70,7 +67,6 @@ export class gsapFunctions {
   }
 
   animateGameOver(el: PIXI.AnimatedSprite, showGameOver: () => void) {
-    console.log("gsap5");
     gsap.to(el, {
       alpha: 0,
       duration: 0.1,
@@ -83,18 +79,37 @@ export class gsapFunctions {
     });
   }
 
-  animateRestartBtn(el: PIXI.Sprite, showRestart: () => void) {
-    const endWidth = this.app.screen.width / 4;
-    const endHeight = this.app.screen.height / 4;
+  animateRestartBtn(
+    el: PIXI.Sprite,
+    endWidth: number,
+    endHeight: number,
+    showRestart: () => void
+  ) {
     gsap.to(el, {
       width: endWidth,
       height: endHeight,
       x: (this.app.screen.width - endWidth) / 2,
-      y: this.app.screen.height / 2 - endHeight,
+      // y: this.app.screen.height / 2 - endHeight,
       duration: 0.5,
       onComplete: () => {
         showRestart();
       },
+    });
+  }
+
+  scoreBoardDown(el: PIXI.Container) {
+    gsap.to(el, {
+      y: 0,
+      duration: 1,
+      ease: "none",
+    });
+  }
+
+  scoreBoardUp(el: PIXI.Container) {
+    gsap.to(el, {
+      y: -el.height,
+      duration: 1,
+      ease: "none",
     });
   }
 }

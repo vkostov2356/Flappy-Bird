@@ -4,7 +4,7 @@ import { utils } from "./utils";
 export class GraphicsManager {
   private utils: utils;
   private app?: PIXI.Application;
-  private textures: Map<string, PIXI.Texture> = new Map();
+  public textures: Map<string, PIXI.Texture> = new Map();
   private registeredAssets: Set<string> = new Set();
 
   public blurFilter: PIXI.BlurFilter = new PIXI.BlurFilter({ strength: 8 });
@@ -15,7 +15,11 @@ export class GraphicsManager {
   constructor(utils: utils, app?: PIXI.Application) {
     this.utils = utils;
     this.app = app;
-    this.createTextures();
+    this.loadTextures();
+  }
+
+  public async loadTextures() {
+    await this.createTextures();
   }
 
   //1. Create PIXI Elements
@@ -88,6 +92,21 @@ export class GraphicsManager {
     const skinBaseTexture = this.app!.renderer.generateTexture(skinBase);
     this.textures.set("skinBase", skinBaseTexture);
 
+    //create score board after game over
+    const scoreBoardBase = this.createRoundedGraphics(
+      "rgb(255, 255, 255)",
+      0,
+      0,
+      this.app!.screen.width / 5,
+      this.app!.screen.height / 3,
+      10,
+      0.8
+    );
+    scoreBoardBase.stroke({ width: 5, color: "rgb(201, 100, 100)", alpha: 1 });
+    const scoreBoardBaseTexture =
+      this.app!.renderer.generateTexture(scoreBoardBase);
+    this.textures.set("scoreBoardBase", scoreBoardBaseTexture);
+
     //create start button texture
     const startBtnBase = this.createRoundedGraphics(
       "rgb(255, 255, 255)",
@@ -110,6 +129,10 @@ export class GraphicsManager {
     //creating restart
     const restartTexture = await PIXI.Assets.load("restart.png");
     this.textures.set("restart", restartTexture);
+
+    //creating scoreBoard
+    const scoreTexture = await PIXI.Assets.load("scoreBoardShort.png");
+    this.textures.set("scoreBoard", scoreTexture);
   }
 
   //get the texture from the map
