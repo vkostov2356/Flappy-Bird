@@ -26,58 +26,58 @@ export class ChooseCharacter {
     this.functionMethod = functionMethod;
   }
 
-  async loadCharacterChoosing() {
-    this.btnBack1 = this.graphicsManager.createSprite("skinBase");
-    this.btnBack1.x = this.app.screen.width / 2 - this.btnBack1.width * 2;
-    this.btnBack2 = this.graphicsManager.createSprite("skinBase");
-    this.btnBack2.x = this.app.screen.width / 2 - this.btnBack2.width / 2;
-    this.btnBack3 = this.graphicsManager.createSprite("skinBase");
-    this.btnBack3.x = this.app.screen.width / 2 + this.btnBack3.width;
+  // async loadCharacterChoosing() {
+  //   this.btnBack1 = this.graphicsManager.createSprite("skinBase");
+  //   this.btnBack1.x = this.app.screen.width / 2 - this.btnBack1.width * 2;
+  //   this.btnBack2 = this.graphicsManager.createSprite("skinBase");
+  //   this.btnBack2.x = this.app.screen.width / 2 - this.btnBack2.width / 2;
+  //   this.btnBack3 = this.graphicsManager.createSprite("skinBase");
+  //   this.btnBack3.x = this.app.screen.width / 2 + this.btnBack3.width;
 
-    this.functionMethod.addChildrenToContainer(this.skinChoices, [
-      this.btnBack1,
-      this.btnBack2,
-      this.btnBack3,
-    ]);
-    this.skinChoices.x = 0;
-    this.skinChoices.y = this.app.screen.height / 2 - this.btnBack1.height / 2;
-    this.loadBirds();
-  }
+  //   this.functionMethod.addChildrenToContainer(this.skinChoices, [
+  //     this.btnBack1,
+  //     this.btnBack2,
+  //     this.btnBack3,
+  //   ]);
+  //   this.skinChoices.x = 0;
+  //   this.skinChoices.y = this.app.screen.height / 2 - this.btnBack1.height / 2;
+  //   this.loadBirds();
+  // }
 
-  async loadBirds() {
-    this.skin1 = await this.graphicsManager.createSkinAnimation(
-      1,
-      this.btnBack1
-    );
+  // async loadBirds() {
+  //   this.skin1 = await this.graphicsManager.createSkinAnimation(
+  //     1,
+  //     this.btnBack1
+  //   );
 
-    this.skin2 = await this.graphicsManager.createSkinAnimation(
-      2,
-      this.btnBack2
-    );
-    this.skin3 = await this.graphicsManager.createSkinAnimation(
-      3,
-      this.btnBack3
-    );
+  //   this.skin2 = await this.graphicsManager.createSkinAnimation(
+  //     2,
+  //     this.btnBack2
+  //   );
+  //   this.skin3 = await this.graphicsManager.createSkinAnimation(
+  //     3,
+  //     this.btnBack3
+  //   );
 
-    this.functionMethod.addChildrenToContainer(this.skinChoices, [
-      this.skin1,
-      this.skin2,
-      this.skin3,
-    ]);
+  //   this.functionMethod.addChildrenToContainer(this.skinChoices, [
+  //     this.skin1,
+  //     this.skin2,
+  //     this.skin3,
+  //   ]);
 
-    this.functionMethod.chosenSkin(
-      [this.btnBack1, this.btnBack2, this.btnBack3],
-      [this.skin1, this.skin2, this.skin3],
-      this.skinChoices
-    );
+  //   this.functionMethod.chosenSkin(
+  //     [this.btnBack1, this.btnBack2, this.btnBack3],
+  //     [this.skin1, this.skin2, this.skin3],
+  //     this.skinChoices
+  //   );
 
-    await this.functionMethod.startAnimation(
-      [this.btnBack1, this.btnBack2, this.btnBack3],
-      [this.skin1, this.skin2, this.skin3]
-    );
-    await this.functionMethod.stopAnimation(
-      [this.btnBack1, this.btnBack2, this.btnBack3],
-      [this.skin1, this.skin2, this.skin3]
-    );
-  }
+  //   await this.functionMethod.startAnimation(
+  //     [this.btnBack1, this.btnBack2, this.btnBack3],
+  //     [this.skin1, this.skin2, this.skin3]
+  //   );
+  //   await this.functionMethod.stopAnimation(
+  //     [this.btnBack1, this.btnBack2, this.btnBack3],
+  //     [this.skin1, this.skin2, this.skin3]
+  //   );
+  // }
 }

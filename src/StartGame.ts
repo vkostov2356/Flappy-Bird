@@ -21,23 +21,23 @@ export class StartGame {
     this.chosenAnimation = chosenAnimation;
   }
 
-  async createStartBtn() {
-    this.startBtnBack = await this.graphicsManager.createSprite("startBtnBase");
-    this.startText = await this.graphicsManager.createText(
-      "START",
-      25,
-      "#000000"
-    );
-    this.functionMethods.hoverScale(
-      [this.startBtnBack, this.startText],
-      this.app.screen
-    );
-    this.functionMethods.centerElement(this.app.screen, this.startText);
-    this.functionMethods.centerElement(this.app.screen, this.startBtnBack);
+  // async createStartBtn() {
+  //   this.startBtnBack = await this.graphicsManager.createSprite("startBtnBase");
+  //   this.startText = await this.graphicsManager.createText(
+  //     "START",
+  //     25,
+  //     "#000000"
+  //   );
+  //   this.functionMethods.hoverScale(
+  //     [this.startBtnBack, this.startText],
+  //     this.app.screen
+  //   );
+  //   this.functionMethods.centerElement(this.app.screen, this.startText);
+  //   this.functionMethods.centerElement(this.app.screen, this.startBtnBack);
 
-    this.functionMethods.addChildrenToContainer(this.startContainer, [
-      this.startBtnBack,
-      this.startText,
-    ]);
-  }
+  //   this.functionMethods.addChildrenToContainer(this.startContainer, [
+  //     this.startBtnBack,
+  //     this.startText,
+  //   ]);
+  // }
 }

@@ -8,29 +8,35 @@ export class gsapFunctions {
   }
 
   //animation of the bird after clicking START
-  // startingBirdAnimation(animation: PIXI.AnimatedSprite, callback?: () => void) {
-  //   gsap.to(animation, {
-  //     x: this.app!.screen.width + animation.width,
-  //     duration: 0.1, //2
-  //     ease: "power1.inOut",
-  //     onComplete: () => {
-  //       animation.width = animation.width / 2;
-  //       animation.height = animation.height / 2;
-  //       this.startingPositionBird(animation, () => callback);
-  //     },
-  //   });
-  // }
+  startingBirdAnimation(
+    animation: PIXI.AnimatedSprite,
+    moveBackground?: () => void
+  ) {
+    gsap.to(animation, {
+      x: this.app!.screen.width + animation.width,
+      duration: 0.1, //2
+      ease: "power1.inOut",
+      onComplete: () => {
+        animation.width = animation.width / 2;
+        animation.height = animation.height / 2;
+        this.startingPositionBird(animation, () => moveBackground);
+      },
+    });
+  }
 
   //restart the bird position
-  startingPositionBird(animation: PIXI.AnimatedSprite, callback?: () => {}) {
+  startingPositionBird(
+    animation: PIXI.AnimatedSprite,
+    moveBackground: () => void
+  ) {
     gsap.fromTo(
       animation,
       { x: 0, y: this.app!.screen.height / 2 / 2 },
       {
         x: animation.width * 2,
-        duration: 0.1, //0.5
+        duration: 0.1, //1
         onComplete: () => {
-          callback!;
+          moveBackground();
         },
       }
     );
@@ -44,6 +50,30 @@ export class gsapFunctions {
           : animation.y - 50;
       },
       duration: 0.3,
+    });
+  }
+
+  moveObstacle(el: PIXI.Container, parent: PIXI.Container) {
+    gsap.to(el, {
+      x: -el.width,
+      duration: 10, //0.5
+      ease: "none",
+      onComplete: () => {
+        parent.removeChild(el);
+      },
+    });
+  }
+
+  animateGameOver(el: PIXI.AnimatedSprite, showGameOver: () => void) {
+    gsap.to(el, {
+      alpha: 0,
+      duration: 0.1,
+      repeat: 1,
+      yoyo: true,
+      ease: "none",
+      onComplete: () => {
+        showGameOver();
+      },
     });
   }
 }
