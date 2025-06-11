@@ -1,5 +1,6 @@
 import * as PIXI from "pixi.js";
-import { GraphicsManager } from "./GraphicsManager1";
+import gsap from "gsap";
+import { GraphicsManager } from "./GraphicsManager";
 import { utils } from "./utils";
 import { gsapFunctions } from "./gsapFunctions";
 
@@ -12,10 +13,14 @@ export class UIElements {
   protected mainContainer: PIXI.Container;
 
   //UI elements
-  protected skinChoices!: PIXI.Container;
-  protected backImgs!: [PIXI.Sprite, PIXI.Sprite];
-  protected charBtnBacks!: [PIXI.Sprite, PIXI.Sprite, PIXI.Sprite];
-  protected skins!: [
+  protected skinChoices: PIXI.Container = new PIXI.Container();
+  protected backImgs = [] as unknown as [PIXI.Sprite, PIXI.Sprite];
+  protected charBtnBacks = [] as unknown as [
+    PIXI.Sprite,
+    PIXI.Sprite,
+    PIXI.Sprite
+  ];
+  protected skins = [] as unknown as [
     PIXI.AnimatedSprite,
     PIXI.AnimatedSprite,
     PIXI.AnimatedSprite
@@ -24,8 +29,8 @@ export class UIElements {
   protected startBtnBack!: PIXI.Sprite;
   protected startText!: PIXI.Text;
 
-  protected obstaclesTop!: [PIXI.Sprite, PIXI.Sprite]; //0 - head, 1 - body
-  protected obstaclesBottom!: [PIXI.Sprite, PIXI.Sprite]; //0 - head, 1 - body
+  protected obstaclesTop = [] as unknown as [PIXI.Sprite, PIXI.Sprite]; //0 - head, 1 - body
+  protected obstaclesBottom = [] as unknown as [PIXI.Sprite, PIXI.Sprite]; //0 - head, 1 - body
   protected singleObstacleContainer!: PIXI.Container;
   protected obstaclesContainer!: PIXI.Container;
 
@@ -66,7 +71,7 @@ export class UIElements {
       "smallSizeCityBackground.webp"
     );
 
-    for (let i = 0; i < this.backImgs.length; i++) {
+    for (let i = 0; i < 2; i++) {
       this.backImgs[i] = new PIXI.Sprite(cityTexture);
       this.utils.evenHeight(this.backImgs[i], this.app!.screen);
       this.utils.evenWidth(this.backImgs[i], this.app!.screen);
@@ -82,11 +87,11 @@ export class UIElements {
     this.backImgs[1].x -= 1;
 
     if (this.backImgs[0].x + this.backImgs[0].width <= 0) {
-      this.backImgs[0].x = this.backImgs[1].x + this.backImgs[1].width;
+      this.backImgs[0].x = this.backImgs[1].x + this.backImgs[1].width - 2;
     }
 
     if (this.backImgs[1].x + this.backImgs[1].width <= 0) {
-      this.backImgs[1].x = this.backImgs[0].x + this.backImgs[0].width;
+      this.backImgs[1].x = this.backImgs[0].x + this.backImgs[0].width - 2;
     }
   }
 
@@ -98,6 +103,8 @@ export class UIElements {
     this.graphicsManager.backgroundTicker = this.graphicsManager.createTicker(); // Reset the ticker
     const tickerStarStop = (element: PIXI.Sprite) => {
       element.onpointerdown = () => {
+        console.log("clicked");
+
         this.graphicsManager.backgroundTicker.start();
         this.moveObstacles();
         this.dropBird();
@@ -115,7 +122,7 @@ export class UIElements {
 
   //create the bases of the choose character state
   async loadCharacters() {
-    for (let i = 0; i < this.charBtnBacks.length; i++) {
+    for (let i = 0; i < 3; i++) {
       this.charBtnBacks[i] = this.graphicsManager.createSprite("skinBase");
       this.charBtnBacks[i].onpointerdown = () => {
         this.chooseCharacter(i);
@@ -127,22 +134,26 @@ export class UIElements {
       this.app.screen.width / 2 - this.charBtnBacks[1].width / 2;
     this.charBtnBacks[2].x =
       this.app.screen.width / 2 + this.charBtnBacks[2].width;
-
-    this.utils.addChildrenToContainer(this.skinChoices, [...this.charBtnBacks]);
-    this.utils.centerElement(this.app.screen, this.skinChoices);
+    this.utils.addChildrenToContainer(this.skinChoices, this.charBtnBacks);
+    this.skinChoices.x = 0;
+    this.skinChoices.y =
+      this.app.screen.height / 2 - this.charBtnBacks[0].height / 2;
 
     this.loadBirds();
   }
 
   //resnder the skins for the player to choose
   async loadBirds() {
-    for (let i = 0; i < this.skins.length; i++) {
+    for (let i = 0; i < 3; i++) {
       this.skins[i] = await this.graphicsManager.createSkinAnimation(
         i + 1,
-        this.charBtnBacks[0]
+        this.charBtnBacks[i]
       );
     }
-    this.utils.addChildrenToContainer(this.skinChoices, [...this.skins]);
+
+    this.utils.addChildrenToContainer(this.skinChoices, this.skins);
+    this.utils.startAnimation(this.charBtnBacks, this.skins);
+    this.utils.stopAnimation(this.charBtnBacks, this.skins);
   }
 
   //set the chosen animation
@@ -165,10 +176,7 @@ export class UIElements {
         this.chosenCharacter.y >=
         this.app!.screen.height - this.chosenCharacter.height / 2
       ) {
-        this
-          .gameOver
-          // this.tickerBack,
-          ();
+        this.gameOver();
       }
     });
 
@@ -186,11 +194,20 @@ export class UIElements {
       };
     };
 
-    birdUp(this.skins[0]);
-    birdUp(this.skins[1]);
+    birdUp(this.backImgs[0]);
+    birdUp(this.backImgs[1]);
   }
 
   ////////////////START BUTTON//////////////////////////
+
+  async loadStartBtn() {
+    await this.createStartBtn();
+
+    this.utils.addChildrenToContainer(this.mainContainer, [
+      this.startContainer,
+      this.chosenCharacter,
+    ]);
+  }
 
   //create start Button
   async createStartBtn() {
@@ -210,15 +227,6 @@ export class UIElements {
     ]);
   }
 
-  async loadStartBtn() {
-    await this.createStartBtn();
-
-    this.utils.addChildrenToContainer(this.mainContainer, [
-      this.startContainer,
-      this.chosenCharacter,
-    ]);
-  }
-
   clickStartBtn() {
     this.utils.removePixelBackground(
       this.graphicsManager.backgroundTicker,
@@ -226,8 +234,10 @@ export class UIElements {
       this.backImgs[0]
     ),
       this.utils.removeChild(this.mainContainer, this.startContainer);
-
-    this.gsap.startingBirdAnimation(this.chosenCharacter, this.moveBackground);
+    this.gsap.startingBirdAnimation(
+      this.chosenCharacter,
+      this.moveBackground.bind(this)
+    );
   }
 
   ////////////////OBSTACLES//////////////////////////
@@ -262,20 +272,20 @@ export class UIElements {
     this.utils.addChildrenToContainer(topObstacle, [...this.obstaclesTop]);
 
     //creating bottom obstacles
-    this.obstaclesBottom[0] = new PIXI.Sprite(pipeHeadTexture);
-    this.obstaclesBottom[1] = new PIXI.Sprite(pipeBodyTexture);
+    this.obstaclesBottom[1] = new PIXI.Sprite(pipeHeadTexture);
+    this.obstaclesBottom[0] = new PIXI.Sprite(pipeBodyTexture);
 
-    this.obstaclesBottom[0].height = 20;
-    this.obstaclesBottom[0].width = 100;
-
-    this.obstaclesBottom[1].height =
-      this.app!.screen.height - this.obstaclesTop[1].height - 150;
+    this.obstaclesBottom[1].height = 20;
     this.obstaclesBottom[1].width = 100;
 
-    this.obstaclesBottom[0].y =
-      this.app!.screen.height - this.obstaclesBottom[1].height;
+    this.obstaclesBottom[0].height =
+      this.app!.screen.height - this.obstaclesTop[1].height - 150;
+    this.obstaclesBottom[0].width = 100;
+
     this.obstaclesBottom[1].y =
-      this.app!.screen.height - this.obstaclesBottom[1].height;
+      this.app!.screen.height - this.obstaclesBottom[0].height;
+    this.obstaclesBottom[0].y =
+      this.app!.screen.height - this.obstaclesBottom[0].height;
 
     this.utils.addChildrenToContainer(bottomObstacle, [
       ...this.obstaclesBottom,
@@ -332,10 +342,13 @@ export class UIElements {
 
     this.backImgs[0].eventMode = this.backImgs[1].eventMode = "none";
 
-    //  this.graphicsManager.backgroundTicker.stop();
-    // this.graphicsManager.birdDropTicker.stop();
-    // this.graphicsManager.obstaclesTicker.stop();
-    this.gsap.animateGameOver(this.chosenCharacter, this.showGameOver);
+    this.graphicsManager.backgroundTicker.stop();
+    this.graphicsManager.birdDropTicker.stop();
+    this.graphicsManager.obstaclesTicker.stop();
+    this.gsap.animateGameOver(
+      this.chosenCharacter,
+      this.showGameOver.bind(this)
+    );
     // gsap.to(this.chosenCharacter, {
     //   alpha: 0,
     //   duration: 0.1,
@@ -351,8 +364,6 @@ export class UIElements {
   showGameOver() {
     const startWidth = this.app.screen.width / 10;
     const startHeight = this.app.screen.height / 10;
-    const endWidth = this.app.screen.width / 4;
-    const endHeight = this.app.screen.height / 4;
 
     this.gameOverSprite.eventMode = "none";
     this.gameOverSprite.width = startWidth;
@@ -361,16 +372,10 @@ export class UIElements {
     this.gameOverSprite.y = this.app.screen.height / 2 - startHeight;
     this.mainContainer.addChild(this.gameOverSprite);
 
-    gsap.to(this.gameOverSprite, {
-      width: endWidth,
-      height: endHeight,
-      x: (this.app.screen.width - endWidth) / 2,
-      y: this.app.screen.height / 2 - endHeight,
-      duration: 0.5,
-      onComplete: () => {
-        this.showRestartBtn();
-      },
-    });
+    this.gsap.animateRestartBtn(
+      this.gameOverSprite,
+      this.showRestartBtn.bind(this)
+    );
   }
 
   showRestartBtn() {
