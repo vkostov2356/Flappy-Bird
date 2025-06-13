@@ -31,8 +31,18 @@ export class utils {
     child.y = parent.height / 2 - child.height / 2;
   }
 
+  //center element aligned with the parent on x
+  centerX(parent: any, child: any) {
+    child.x = parent.width / 2 - child.width / 2;
+  }
+
+  //center element aligned with the parent on y
+  centerY(parent: any, child: any) {
+    child.y = parent.height / 2 - child.height / 2;
+  }
+
   //creating a gray filter for a sprite
-  grayAnimation(element: PIXI.AnimatedSprite) {
+  grayAnimation(element: any) {
     const grayFilter = new PIXI.ColorMatrixFilter();
     grayFilter.desaturate();
     element.filters = [grayFilter];

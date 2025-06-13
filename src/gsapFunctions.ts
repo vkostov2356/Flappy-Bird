@@ -66,7 +66,7 @@ export class gsapFunctions {
     });
   }
 
-  animateGameOver(el: PIXI.AnimatedSprite, showGameOver: () => void) {
+  animateBirdHit(el: PIXI.AnimatedSprite, showGameOver: () => void) {
     gsap.to(el, {
       alpha: 0,
       duration: 0.1,
@@ -75,11 +75,12 @@ export class gsapFunctions {
       ease: "none",
       onComplete: () => {
         showGameOver();
+        console.log("dead bird");
       },
     });
   }
 
-  animateRestartBtn(
+  animateGameOver(
     el: PIXI.Sprite,
     endWidth: number,
     endHeight: number,
@@ -89,11 +90,21 @@ export class gsapFunctions {
       width: endWidth,
       height: endHeight,
       x: (this.app.screen.width - endWidth) / 2,
-      // y: this.app.screen.height / 2 - endHeight,
       duration: 0.5,
       onComplete: () => {
         showRestart();
+        console.log("gameover done");
       },
+    });
+  }
+
+  animateRestartBtn(el: PIXI.Sprite) {
+    gsap.to(el, {
+      height: 100,
+      width: 100,
+      duration: 0.5,
+      x: this.app.screen.width / 2 - 50,
+      y: this.app.screen.height / 2 + this.app.screen.height / 4,
     });
   }
 
@@ -108,6 +119,14 @@ export class gsapFunctions {
   scoreBoardUp(el: PIXI.Container) {
     gsap.to(el, {
       y: -el.height,
+      duration: 1,
+      ease: "none",
+    });
+  }
+
+  animateWinPanel(winPanel: PIXI.Container) {
+    gsap.to(winPanel, {
+      y: winPanel.height,
       duration: 1,
       ease: "none",
     });

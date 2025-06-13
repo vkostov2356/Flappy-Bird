@@ -43,6 +43,16 @@ export class UIElements {
   protected scoreBoardBase!: PIXI.Sprite;
   protected scoreMedal!: PIXI.Sprite;
 
+  protected winPanel!: PIXI.Container;
+  protected endBestScoreText!: PIXI.Text;
+  protected endBestScoreNumber!: PIXI.Text;
+  protected endScoreText!: PIXI.Text;
+  protected endScoreNumber!: PIXI.Text;
+  protected winPanelTexts = [] as unknown as PIXI.Text[];
+  protected newSticker!: PIXI.Sprite;
+  protected medalText!: PIXI.Text;
+  protected medalAnimation!: PIXI.Sprite;
+
   protected gameOverSprite!: PIXI.Sprite;
   protected gameRestartSprite!: PIXI.Sprite;
 
@@ -308,6 +318,7 @@ export class UIElements {
   //moving animation for obstacles
   async moveObstacles() {
     this.obstaclesContainer = this.graphicsManager.createContainer();
+    this.mainContainer.addChild(this.obstaclesContainer);
     this.graphicsManager.obstaclesTicker = this.graphicsManager.createTicker();
     let obstacles: PIXI.Container[] = [];
     let elapsed = 0;
@@ -328,7 +339,7 @@ export class UIElements {
         obstacles.shift();
       }
 
-      if (elapsed >= 1.5) {
+      if (elapsed >= 3) {
         elapsed = 0;
         this.singleObstacleContainer = new PIXI.Container();
 
@@ -336,11 +347,9 @@ export class UIElements {
           this.singleObstacleContainer,
           await this.renderObstacles()
         );
-
         obstacles.push(this.singleObstacleContainer);
         this.obstaclesContainer.addChild(this.singleObstacleContainer);
 
-        this.mainContainer.addChild(this.obstaclesContainer);
         this.singleObstacleContainer.x = this.app!.screen.width;
         this.gsap.moveObstacle(
           this.singleObstacleContainer,
@@ -358,12 +367,13 @@ export class UIElements {
   async loadScoreBord() {
     this.scoreContainer = this.graphicsManager.createContainer();
     this.scoreBoard = this.graphicsManager.createSprite("scoreBoard");
-    this.scoreBoard.width = this.app.screen.width / 7;
-    this.scoreBoard.height = this.app.screen.height / 3;
+    this.scoreBoard.width = this.app.screen.width / 10;
+    this.scoreBoard.height = this.app.screen.height / 6;
     this.scoreContainer.addChild(this.scoreBoard);
     this.scoreContainer.x =
       this.app.screen.width - this.scoreContainer.width * 1.5;
     this.scoreContainer.y = -this.scoreBoard.height;
+    this.scoreContainer.zIndex = 90;
     this.mainContainer.addChild(this.scoreContainer);
     this.loadScore();
   }
@@ -372,7 +382,7 @@ export class UIElements {
   loadScore() {
     this.scoreText = this.graphicsManager.createText(
       "Score",
-      30,
+      20,
       "rgb(255, 255, 255)"
     );
     this.scoreText.x = this.scoreBoard.width / 2 - this.scoreText.width / 2;
@@ -385,7 +395,7 @@ export class UIElements {
     this.scoreContainer.removeChild(this.scoreResult);
     this.scoreResult = this.graphicsManager.createText(
       `${score}`,
-      30,
+      20,
       "rgb(255, 255, 255)"
     );
     this.scoreResult.x = this.scoreBoard.width / 2 - this.scoreResult.width / 2;
@@ -408,23 +418,96 @@ export class UIElements {
       elBounds.y < obstacleTop.y + obstacleTop.height &&
       elBounds.y + elBounds.height > obstacleTop.y
     ) {
-      //   this.gameOver();
+      this.gameOver();
     } else if (
       elBounds.x < obstacleBot.x + obstacleBot.width &&
       elBounds.x + elBounds.width > obstacleBot.x &&
       elBounds.y < obstacleBot.y + obstacleBot.height &&
       elBounds.y + elBounds.height > obstacleBot.y
     ) {
-      //   this.gameOver();
+      this.gameOver();
     }
   }
 
-  //loading scoreboard base after game over
-  loadScoreBoardBase() {
-    this.bestScore = this.bestScore < this.score ? this.score : this.bestScore;
-    this.scoreBoardBase = this.graphicsManager.createSprite("scoreBoardBase");
-    this.utils.centerElement(this.app.screen, this.scoreBoardBase);
-    this.mainContainer.addChild(this.scoreBoardBase);
+  //loading win panel
+  loadWinPanel() {
+    this.winPanel = this.graphicsManager.createContainer();
+
+    this.scoreBoardBase = this.graphicsManager.createSprite("winPanel");
+    this.winPanel.eventMode = "none";
+    this.winPanel.addChild(this.scoreBoardBase);
+    this.utils.centerElement(this.app.screen, this.winPanel);
+    this.mainContainer.addChild(this.winPanel);
+    this.loadingFinalScores();
+  }
+
+  loadingFinalScores() {
+    const xEl = this.winPanel.x - this.winPanel.width / 2;
+    const hEl = this.winPanel.height / 7;
+    const newBest = this.bestScore < this.score;
+
+    this.endBestScoreText = this.graphicsManager.createText(
+      `BEST SCORE`,
+      30,
+      " #FCA048"
+    );
+
+    this.endBestScoreText.height = hEl;
+
+    this.endBestScoreText.x = xEl;
+    this.endBestScoreText.y = this.winPanel.height / 6;
+
+    this.endBestScoreNumber = this.graphicsManager.createText(
+      `${newBest ? this.score : this.bestScore}`,
+      30,
+      " #FCA048"
+    );
+
+    this.endBestScoreNumber.x = xEl;
+    this.endBestScoreNumber.y =
+      this.endBestScoreText.y + this.endBestScoreNumber.height;
+
+    this.endScoreText = this.graphicsManager.createText(
+      "SCORE",
+      30,
+      " #FCA048"
+    );
+    this.endScoreText.x = xEl;
+    this.endScoreText.y = this.endBestScoreNumber.y + this.endScoreText.height;
+
+    this.endScoreNumber = this.graphicsManager.createText(
+      `${this.score}`,
+      30,
+      " #FCA048"
+    );
+    this.endScoreNumber.x = xEl;
+    this.endScoreNumber.y = this.endScoreText.y + this.endScoreNumber.height;
+
+    if (this.bestScore < this.score) {
+      this.bestScore = this.score;
+    } else {
+      this.utils.grayAnimation(this.endBestScoreText);
+      this.utils.grayAnimation(this.endBestScoreNumber);
+    }
+
+    this.utils.addChildrenToContainer(this.winPanel, [
+      this.endBestScoreText,
+      this.endBestScoreNumber,
+      this.endScoreText,
+      this.endScoreNumber,
+    ]);
+
+    if (newBest) {
+      this.newSticker = this.graphicsManager.createSprite("newSticker");
+      this.newSticker.height = hEl * 1.5;
+      this.newSticker.width = hEl * 1.5;
+
+      this.newSticker.x = this.endBestScoreText.x - this.newSticker.width / 2;
+      this.newSticker.y = this.endBestScoreText.y - this.newSticker.height / 2;
+      this.winPanel.addChild(this.newSticker);
+    } else {
+      this.winPanel.removeChild(this.newSticker);
+    }
   }
 
   ////////////////END OF GAME//////////////////////////
@@ -439,28 +522,28 @@ export class UIElements {
     this.graphicsManager.backgroundTicker.stop();
     this.graphicsManager.birdDropTicker.stop();
     this.graphicsManager.obstaclesTicker.stop();
-    this.gsap.animateGameOver(
+    this.gsap.animateBirdHit(
       this.chosenCharacter,
       this.showGameOver.bind(this)
     );
-    this.loadScoreBoardBase();
+    this.loadWinPanel();
   }
 
   showGameOver() {
     const startWidth = this.app.screen.width / 10;
     const startHeight = this.app.screen.height / 10;
-    const endWidth = this.app.screen.width / 4;
+    const endWidth = this.app.screen.width / 3;
     const endHeight = this.app.screen.height / 4;
-    console.log(this.scoreBoardBase.y);
+    console.log(this.winPanel.y);
 
     this.gameOverSprite.eventMode = "none";
     this.gameOverSprite.width = startWidth;
     this.gameOverSprite.height = startHeight;
     this.gameOverSprite.x = (this.app.screen.width - startWidth) / 2;
-    this.gameOverSprite.y = this.scoreBoardBase.y - endHeight;
+    this.gameOverSprite.y = this.winPanel.y - endHeight;
     this.mainContainer.addChild(this.gameOverSprite);
 
-    this.gsap.animateRestartBtn(
+    this.gsap.animateGameOver(
       this.gameOverSprite,
       endWidth,
       endHeight,
@@ -478,13 +561,7 @@ export class UIElements {
       this.app.screen.height / 2 + this.app.screen.height / 2 / 2;
 
     this.mainContainer.addChild(this.gameRestartSprite);
-    gsap.to(this.gameRestartSprite, {
-      height: 100,
-      width: 100,
-      duration: 0.5,
-      x: this.app.screen.width / 2 - 50,
-      y: this.app.screen.height / 2 + this.app.screen.height / 2 / 2,
-    });
+    this.gsap.animateRestartBtn(this.gameRestartSprite);
 
     this.gameRestartSprite.onpointerover = () => {
       this.gameRestartSprite.height = this.gameRestartSprite.width += 10;
@@ -502,7 +579,10 @@ export class UIElements {
     this.backImgs[0].x = 0;
     this.backImgs[1].x = this.backImgs[0].width;
     this.chosenCharacter.play();
+    console.log(this.obstaclesContainer);
+
     this.obstaclesContainer.removeChildren();
+    console.log(this.obstaclesContainer);
     this.scoreBoard;
     this.scoreContainer.y = -this.scoreContainer.height;
     this.gsap.startingPositionBird(this.chosenCharacter, () =>
@@ -511,6 +591,7 @@ export class UIElements {
     this.gsap.scoreBoardDown(this.scoreContainer);
     this.mainContainer.removeChild(this.gameOverSprite);
     this.mainContainer.removeChild(this.gameRestartSprite);
+    this.winPanel.removeChildren();
     this.score = 0;
     this.updateScore(this.score);
   }

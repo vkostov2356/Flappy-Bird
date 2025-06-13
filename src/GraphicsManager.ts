@@ -88,24 +88,24 @@ export class GraphicsManager {
       10,
       0.8
     );
-    skinBase.stroke({ width: 5, color: "#F79370", alpha: 1 });
+    skinBase.stroke({ width: 5, color: " #FCA048", alpha: 1 });
     const skinBaseTexture = this.app!.renderer.generateTexture(skinBase);
     this.textures.set("skinBase", skinBaseTexture);
 
-    //create score board after game over
+    // //create score board after game over
     const scoreBoardBase = this.createRoundedGraphics(
       "rgb(255, 255, 255)",
       0,
       0,
-      this.app!.screen.width / 5,
+      this.app!.screen.width / 3,
       this.app!.screen.height / 3,
       10,
       0.8
     );
-    scoreBoardBase.stroke({ width: 5, color: "rgb(201, 100, 100)", alpha: 1 });
+    scoreBoardBase.stroke({ width: 5, color: "#543847", alpha: 1 });
     const scoreBoardBaseTexture =
       this.app!.renderer.generateTexture(scoreBoardBase);
-    this.textures.set("scoreBoardBase", scoreBoardBaseTexture);
+    this.textures.set("winPanel", scoreBoardBaseTexture);
 
     //create start button texture
     const startBtnBase = this.createRoundedGraphics(
@@ -117,7 +117,7 @@ export class GraphicsManager {
       10,
       0.8
     );
-    startBtnBase.stroke({ width: 5, color: "rgb(21, 234, 39)", alpha: 1 });
+    startBtnBase.stroke({ width: 5, color: " #FCA048", alpha: 1 });
     const startBtnBaseTexture =
       this.app!.renderer.generateTexture(startBtnBase);
     this.textures.set("startBtnBase", startBtnBaseTexture);
@@ -133,6 +133,10 @@ export class GraphicsManager {
     //creating scoreBoard
     const scoreTexture = await PIXI.Assets.load("scoreBoardShort.png");
     this.textures.set("scoreBoard", scoreTexture);
+
+    //creating new sticker
+    const newStickerTexture = await PIXI.Assets.load("new.png");
+    this.textures.set("newSticker", newStickerTexture);
   }
 
   //get the texture from the map
