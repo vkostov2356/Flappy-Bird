@@ -190,7 +190,7 @@ export class UIElements {
     this.graphicsManager.birdDropTicker = this.graphicsManager.createTicker();
 
     this.graphicsManager.birdDropTicker.add(() => {
-      this.chosenCharacter.y += 3;
+      this.chosenCharacter.y += 4;
 
       if (
         this.chosenCharacter.y >=
@@ -524,9 +524,9 @@ export class UIElements {
     this.graphicsManager.obstaclesTicker.stop();
     this.gsap.animateBirdHit(
       this.chosenCharacter,
+      this.loadWinPanel.bind(this),
       this.showGameOver.bind(this)
     );
-    this.loadWinPanel();
   }
 
   showGameOver() {
@@ -534,7 +534,6 @@ export class UIElements {
     const startHeight = this.app.screen.height / 10;
     const endWidth = this.app.screen.width / 3;
     const endHeight = this.app.screen.height / 4;
-    console.log(this.winPanel.y);
 
     this.gameOverSprite.eventMode = "none";
     this.gameOverSprite.width = startWidth;

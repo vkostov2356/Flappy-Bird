@@ -15,7 +15,7 @@ export class gsapFunctions {
   ) {
     gsap.to(animation, {
       x: this.app!.screen.width + animation.width,
-      duration: 0.1, //2
+      duration: 2, //2
       ease: "power1.inOut",
       onComplete: () => {
         animation.width = animation.width / 2;
@@ -36,7 +36,7 @@ export class gsapFunctions {
       { x: 0, y: this.app!.screen.height / 2 / 2 },
       {
         x: animation.width * 2,
-        duration: 0.1, //1
+        duration: 1, //1
         onComplete: () => {
           moveBackground();
         },
@@ -66,16 +66,22 @@ export class gsapFunctions {
     });
   }
 
-  animateBirdHit(el: PIXI.AnimatedSprite, showGameOver: () => void) {
+  animateBirdHit(
+    el: PIXI.AnimatedSprite,
+    showWinPanel: () => void,
+    showGameOver: () => void
+  ) {
     gsap.to(el, {
       alpha: 0,
-      duration: 0.1,
-      repeat: 1,
+      duration: 0.5,
+      repeat: 3,
       yoyo: true,
       ease: "none",
       onComplete: () => {
+        console.log("before game");
+        showWinPanel();
         showGameOver();
-        console.log("dead bird");
+        console.log("before win panel");
       },
     });
   }
