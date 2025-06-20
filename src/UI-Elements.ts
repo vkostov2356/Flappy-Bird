@@ -13,51 +13,52 @@ export class UIElements {
   protected mainContainer: PIXI.Container;
 
   //UI elements
-  protected skinChoices: PIXI.Container = new PIXI.Container();
-  protected backImgs = [] as unknown as [PIXI.Sprite, PIXI.Sprite];
-  protected charBtnBacks = [] as unknown as [
+  private skinChoices: PIXI.Container = new PIXI.Container();
+  private backImgs = [] as unknown as [PIXI.Sprite, PIXI.Sprite];
+  private charBtnBacks = [] as unknown as [
     PIXI.Sprite,
     PIXI.Sprite,
     PIXI.Sprite
   ];
-  protected skins = [] as unknown as [
+  private skins = [] as unknown as [
     PIXI.AnimatedSprite,
     PIXI.AnimatedSprite,
     PIXI.AnimatedSprite
   ];
-  protected startContainer!: PIXI.Container;
-  protected startBtnBack!: PIXI.Sprite;
-  protected startText!: PIXI.Text;
+  private startContainer!: PIXI.Container;
+  private startBtnBack!: PIXI.Sprite;
+  private startText!: PIXI.Text;
 
-  protected obstaclesTop = [] as unknown as [PIXI.Sprite, PIXI.Sprite]; //0 - head, 1 - body
-  protected obstaclesBottom = [] as unknown as [PIXI.Sprite, PIXI.Sprite]; //0 - head, 1 - body
-  protected singleObstacleContainer!: PIXI.Container;
-  protected obstaclesContainer!: PIXI.Container;
+  //obstacles
+  private obstaclesTop = [] as unknown as [PIXI.Sprite, PIXI.Sprite]; //0 - head, 1 - body
+  private obstaclesBottom = [] as unknown as [PIXI.Sprite, PIXI.Sprite]; //0 - head, 1 - body
+  private singleObstacleContainer!: PIXI.Container;
+  private obstaclesContainer!: PIXI.Container;
 
-  protected scoreContainer!: PIXI.Container;
-  protected scoreBoard!: PIXI.Sprite;
-  protected scoreText!: PIXI.Text;
-  protected scoreResult!: PIXI.Text;
-  protected bestScore: number = 0;
-  protected score: number = 0;
-  protected scoreBoardBase!: PIXI.Sprite;
-  protected scoreMedal!: PIXI.Sprite;
+  //score board elements
+  private scoreContainer!: PIXI.Container;
+  private scoreBoard!: PIXI.Sprite;
+  private scoreText!: PIXI.Text;
+  private scoreResult!: PIXI.Text;
+  private bestScore: number = 0;
+  private score: number = 0;
+  private scoreBoardBase!: PIXI.Sprite;
+  private scoreMedal!: PIXI.Sprite;
 
-  protected winPanel!: PIXI.Container;
-  protected endBestScoreText!: PIXI.Text;
-  protected endBestScoreNumber!: PIXI.Text;
-  protected endScoreText!: PIXI.Text;
-  protected endScoreNumber!: PIXI.Text;
-  protected winPanelTexts = [] as unknown as PIXI.Text[];
-  protected newSticker!: PIXI.Sprite;
-  protected medalText!: PIXI.Text;
-  protected medalAnimation!: PIXI.Sprite;
+  //win panel elements
+  private winPanel!: PIXI.Container;
+  private endBestScoreText!: PIXI.Text;
+  private endBestScoreNumber!: PIXI.Text;
+  private endScoreText!: PIXI.Text;
+  private endScoreNumber!: PIXI.Text;
+  private newSticker!: PIXI.Sprite;
 
-  protected gameOverSprite!: PIXI.Sprite;
-  protected gameRestartSprite!: PIXI.Sprite;
+  //game over elements
+  private gameOverSprite!: PIXI.Sprite;
+  private gameRestartSprite!: PIXI.Sprite;
 
   //chosen character
-  protected chosenCharacter!: PIXI.AnimatedSprite; //last name chosenAnimation
+  private chosenCharacter!: PIXI.AnimatedSprite;
 
   constructor(
     app: PIXI.Application,
@@ -574,7 +575,6 @@ export class UIElements {
   }
 
   restartBtnAction() {
-    // this.functionMethod.isPlaying = false;
     this.backImgs[0].x = 0;
     this.backImgs[1].x = this.backImgs[0].width;
     this.chosenCharacter.play();
