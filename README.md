@@ -10,4 +10,5 @@ A Base Desktop copy of the game Flappy Bird
 - [ ] More UI updates and animations for better visuals
 - [ ] Loaders 
 - [ ] Multiplayer with friends
+- [ ] Bug Fixing
 
